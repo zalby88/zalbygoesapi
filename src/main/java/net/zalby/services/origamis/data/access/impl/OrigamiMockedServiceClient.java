@@ -14,6 +14,7 @@ import net.zalby.services.origamis.model.Origami;
  */
 public class OrigamiMockedServiceClient implements OrigamiServiceClient {
 
+	@Override
 	public List<Origami> callListService() {
 		return generateMockedList();
 	}

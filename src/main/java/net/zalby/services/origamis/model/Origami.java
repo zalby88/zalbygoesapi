@@ -2,6 +2,7 @@ package net.zalby.services.origamis.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.annotation.Id;
 
 /**
  * API Model class for the Origami resource
@@ -11,7 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class Origami {
 	
+	@Id
 	private String id;
+	
 	private String name;
 	private String author;
 	private String difficulty;

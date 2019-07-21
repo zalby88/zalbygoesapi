@@ -60,7 +60,7 @@ public class OrigamisControllerIntegrationTest {
 		doReturn(expectedResponse).when(serviceClientToMock).callListService();
 		
 		// Creating the Controller
-		OrigamisController controllerToBeTested = new OrigamisController();
+		OrigamisController controllerToBeTested = new OrigamisController("mocked");
 		
 		// Injecting the Mocked Service Client (This prevents that the actual HTTP call will performed)
 		controllerToBeTested.setOrigamiServiceClient(serviceClientToMock);

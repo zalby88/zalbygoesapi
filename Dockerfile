@@ -24,7 +24,7 @@ RUN cd zalbygoesapi/ && mvn clean package
 ## -------------------------------------------
 ## FINAL Command run when the container is run
 
-CMD java -jar /zalbygoesapi/target/zalbygoesapi.jar
+CMD java -jar /zalbygoesapi/target/zalbygoesapi.jar --zalbygoesapi.db.type=mocked
 
 ## -----------------------------------
 ## Build the image with this command: 

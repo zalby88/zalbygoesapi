@@ -1,6 +1,8 @@
 package net.zalby.services.origamis.controller;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import net.zalby.services.origamis.data.access.OrigamiServiceClient;
 import net.zalby.services.origamis.data.access.impl.OrigamiMockedServiceClient;
+import net.zalby.services.origamis.data.access.impl.mongo.OrigamiMongoDbClient;
 import net.zalby.services.origamis.logic.OrigamiLogicManager;
 import net.zalby.services.origamis.logic.impl.OrigamiLogicManagerDefaultImpl;
 import net.zalby.services.origamis.model.Origami;
@@ -27,15 +30,20 @@ import net.zalby.services.origamis.model.Origami;
 @RestController
 @Api(value = "Origamis", description = "The Endpoints list for the Origamis learnt by me")
 public class OrigamisController {
+	
+	private static final String DATABASE_TYPE_MONGO = "mongo";
 
+	private String dbType;
+	
 	/* Service Clients */
 	private OrigamiServiceClient origamiServiceClient;
 
 	/**
 	 *  Main Constructor: Initialises the API Service Layer and Logic
 	 */
-	public OrigamisController() {
-		init();
+	public OrigamisController(@Value("${zalbygoesapi.db.type}") String dbType) {
+		this.dbType = dbType;
+		initServiceClient();
 	}
 	
 	/**
@@ -87,11 +95,15 @@ public class OrigamisController {
 	/**
 	 * Controller Initialisation routine.
 	 */
-	private void init() {
+	private void initServiceClient() {	
 		/* Beans injection is currently hard-coded, in future it could be re-factored using Spring annotations */
-		setOrigamiServiceClient(new OrigamiMockedServiceClient());
+		if (DATABASE_TYPE_MONGO.equals(getDbType())) {
+			setOrigamiServiceClient(new OrigamiMongoDbClient());
+		} else {
+			//Mocked (Default) Service Client
+			setOrigamiServiceClient(new OrigamiMockedServiceClient());
+		}
 	}
-
 
 	
 	/* --------------------*/
@@ -103,6 +115,10 @@ public class OrigamisController {
 
 	public void setOrigamiServiceClient(OrigamiServiceClient origamiServiceClient) {
 		this.origamiServiceClient = origamiServiceClient;
+	}
+
+	public String getDbType() {
+		return dbType;
 	}
 
 }// end class
