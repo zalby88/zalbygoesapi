@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import net.zalby.services.origamis.exceptions.ResourceNotFoundException;
+import net.zalby.services.origamis.exceptions.ServiceClientErrorException;
 
 /**
  * A configuration class with additional Exception handlers used to overwrite the default error message
@@ -30,6 +31,22 @@ public class ControllerHelperConfig {
     	
         return ResponseEntity
         		.status(HttpStatus.NOT_FOUND)
+        		.body(errMessage);
+    }
+    
+    /**
+     * Handles ServiceClientErrorException for the Web application controllers.
+     * @param The Exception to handle
+     * @return The HTTP Response Entity
+     */
+    @ExceptionHandler(ServiceClientErrorException.class)
+    public ResponseEntity<ErrorMessage> handleException(ServiceClientErrorException e) {
+
+    	ErrorMessage errMessage = new ErrorMessage();
+    	errMessage.setMessage(e.getMessage());
+    	
+        return ResponseEntity
+        		.status(HttpStatus.INTERNAL_SERVER_ERROR)
         		.body(errMessage);
     }
     

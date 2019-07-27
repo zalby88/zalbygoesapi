@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import net.zalby.services.origamis.data.access.OrigamiServiceClient;
+import net.zalby.services.origamis.exceptions.ServiceClientErrorException;
 import net.zalby.services.origamis.model.Origami;
 
 /**
@@ -22,14 +23,20 @@ public class OrigamiMongoDbClient implements OrigamiServiceClient {
 	
 	private MongoDbFactory mongoFactory;
 	private MongoOperations mongoOps;
-	
-	public OrigamiMongoDbClient() {
-		initMongoDbCollection();
-	}
 
 	@Override
 	public List<Origami> callListService() {
-		return mongoOps.findAll(Origami.class);
+		try {
+			// Initialize the connection at the first call
+			if (!isConnectionInitialized()) {
+				initMongoDbCollection();
+			} 
+			
+			return mongoOps.findAll(Origami.class);
+			
+		} catch (Exception e) {
+			throw new ServiceClientErrorException(e.getMessage());
+		}
 	}
 	
 	private void initMongoDbCollection() {
@@ -42,6 +49,10 @@ public class OrigamiMongoDbClient implements OrigamiServiceClient {
 	    // Mongo DB Factory
 	    mongoFactory =  new SimpleMongoDbFactory(mongoClient, MONGODB_DB_NAME);
 	    mongoOps = new MongoTemplate(mongoFactory);
+	}
+	
+	private boolean isConnectionInitialized() {
+		return mongoFactory != null && mongoOps != null;
 	}
 	
 }// end class
