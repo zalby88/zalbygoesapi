@@ -4,6 +4,11 @@
 FROM maven:3.3-jdk-8
 
 ## ----------------------
+## Environement Variables
+
+ENV dbtype mongo
+
+## ----------------------
 ## Exposing the HTTP Port
 
 EXPOSE 8080
@@ -24,7 +29,7 @@ RUN cd zalbygoesapi/ && mvn clean package
 ## -------------------------------------------
 ## FINAL Command run when the container is run
 
-CMD java -jar /zalbygoesapi/target/zalbygoesapi.jar --zalbygoesapi.db.type=mocked
+CMD java -jar /zalbygoesapi/target/zalbygoesapi.jar --zalbygoesapi.db.type=${dbtype}
 
 ## -----------------------------------
 ## Build the image with this command: 
