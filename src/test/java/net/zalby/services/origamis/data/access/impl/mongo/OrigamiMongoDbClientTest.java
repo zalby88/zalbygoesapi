@@ -1,4 +1,4 @@
-package net.zalby.services.origamis.data.access.impl;
+package net.zalby.services.origamis.data.access.impl.mongo;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -9,33 +9,40 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.zalby.services.origamis.data.access.impl.OrigamiMockedServiceClient;
+import net.zalby.services.origamis.data.access.impl.mongo.OrigamiMongoDbClient;
+import net.zalby.services.origamis.exceptions.ServiceClientErrorException;
 import net.zalby.services.origamis.model.Origami;
 
 /**
- * Test Suite class for the Mocked (Data Layer) Origami Service class.
+ * Test Suite class for the MongoDB (Data Layer) Origami Service class.
  * External calls are mocked
  * 
  * @author Alberto Lazzarin
  *
  */
-public class OrigamiMockedServiceClientTest {
+public class OrigamiMongoDbClientTest {
 	
-	private OrigamiMockedServiceClient serviceClientToTest;
+	private OrigamiMongoDbClient serviceClientToTest;
 	private List<Origami> expectedResponse;
+	private Exception expectedException;
 	
 	/**
 	 * 1 - Arrange
 	 */
 	@Before
 	public void initMocks() {
+		// Initialising the Expected Exception
+		 expectedException = new ServiceClientErrorException("Mocked Exception");
+		
 		// Initialising the Expected Response
 		initExpectedResponse();
 		
-		serviceClientToTest = spy(new OrigamiMockedServiceClient());
+		serviceClientToTest = spy(new OrigamiMongoDbClient());
 		
-		// The mock will be triggered when the actual GET call is made
-		doReturn(expectedResponse).when(serviceClientToTest).callListService();
+		// The mock will be triggered when trying to get the Operations class 
+		// (responsible to perform the external calls)
+		doReturn(true)
+			.when(serviceClientToTest).isConnectionInitialised();
 	}
 
 	
@@ -44,12 +51,45 @@ public class OrigamiMockedServiceClientTest {
 		/*
 		 *  2 - Act 
 		 */ 
+		
+		// The mock will be triggered when the Operations class performs the GET call
+		doReturn(expectedResponse)
+			.when(serviceClientToTest).retrieveAllOrigamiFromConnection();
+		
 		List<Origami> responseList = serviceClientToTest.callListService();
 		
 		/*
 		 *  3 - Assert 
 		 */ 
 		assertEquals("The Response should match the expected one", expectedResponse, responseList);
+	}
+	
+	@Test
+	public void callService_failure() {
+		/*
+		 *  2 - Act 
+		 */ 
+		
+		// The mock will be triggered when the Operations class performs the GET call
+		doThrow(new RuntimeException(expectedException.getMessage()))
+			.when(serviceClientToTest).retrieveAllOrigamiFromConnection();
+		
+		try {
+			serviceClientToTest.callListService();
+			
+			//should never reach this point
+			fail("An exception should have been raised before this point");
+		
+		} catch (Exception exceptionToEvaluate) {
+			/*
+			 *  3 - Assert 
+			 */ 
+			assertEquals("The thrown exception class must be the expected one", 
+					expectedException.getClass(), exceptionToEvaluate.getClass());
+			
+			assertEquals("The thrown exception message must be the expected one",
+					expectedException.getMessage(), exceptionToEvaluate.getMessage());
+		} 
 	}
 	
 	/* -----------------------

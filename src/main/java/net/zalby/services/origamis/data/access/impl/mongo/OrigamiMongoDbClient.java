@@ -18,41 +18,67 @@ import net.zalby.services.origamis.model.Origami;
  *
  */
 public class OrigamiMongoDbClient implements OrigamiServiceClient {
-	
+
 	private static final String MONGODB_DB_NAME = "zalbystuff";
-	
-	private MongoDbFactory mongoFactory;
+	private static final String LOCALHOST_IP_ADDRESS = "127.0.0.1";
+	private static final String DEFAULT_MONGODB_PORT = "27017";
+
 	private MongoOperations mongoOps;
 
 	@Override
 	public List<Origami> callListService() {
 		try {
-			// Initialize the connection at the first call
-			if (!isConnectionInitialized()) {
-				initMongoDbCollection();
-			} 
-			
-			return mongoOps.findAll(Origami.class);
-			
+			// Initialise the connection at the first call
+			if (!isConnectionInitialised()) {
+				initMongoDbConnection();
+			}
+
+			return retrieveAllOrigamiFromConnection();
+
 		} catch (Exception e) {
 			throw new ServiceClientErrorException(e.getMessage());
 		}
 	}
-	
-	private void initMongoDbCollection() {
-		// Set server address   
-		ServerAddress serverAddress = new ServerAddress("127.0.0.1", Integer.parseInt("27017"));
-		
-	    // Mongo Client
-	    MongoClient mongoClient = new MongoClient(serverAddress); 
-		
-	    // Mongo DB Factory
-	    mongoFactory =  new SimpleMongoDbFactory(mongoClient, MONGODB_DB_NAME);
-	    mongoOps = new MongoTemplate(mongoFactory);
+
+	/**
+	 *  Initialises the MongoDB Client classes in order to perform the call
+	 */
+	protected void initMongoDbConnection() {
+		// Set server address
+		ServerAddress serverAddress = 
+				new ServerAddress(LOCALHOST_IP_ADDRESS, Integer.parseInt(DEFAULT_MONGODB_PORT));
+
+		// Mongo Client
+		MongoClient mongoClient = new MongoClient(serverAddress);
+
+		// Mongo DB Factory
+		MongoDbFactory mongoFactory = new SimpleMongoDbFactory(mongoClient, MONGODB_DB_NAME);
+
+		// Mongo DB Operations
+		mongoOps = new MongoTemplate(mongoFactory);
+	}
+
+	/**
+	 *  Performs a basic check of the Client class (the MongoOperations one)
+	 */
+	protected boolean isConnectionInitialised() {
+		return this.getMongoOps() != null;
 	}
 	
-	private boolean isConnectionInitialized() {
-		return mongoFactory != null && mongoOps != null;
+	/**
+	 *  Performs the actual call to MongoDB in order to retrieve all of the Origami
+	 */
+	protected List<Origami> retrieveAllOrigamiFromConnection() {
+		return getMongoOps().findAll(Origami.class);
 	}
-	
+
+	/*
+	 * Getters and Setters
+	 * 
+	 */
+
+	public MongoOperations getMongoOps() {
+		return mongoOps;
+	}
+
 }// end class
