@@ -13,6 +13,8 @@ import net.zalby.services.origamis.model.Origami;
  *
  */
 public class OrigamiMockedServiceClient implements OrigamiServiceClient {
+	
+	private static final String MOCK_ID_PREFIX = "mock_";
 
 	@Override
 	public List<Origami> callListService() {
@@ -25,28 +27,28 @@ public class OrigamiMockedServiceClient implements OrigamiServiceClient {
 		ArrayList<Origami> mockedList = new ArrayList<Origami>();
 		
 		Origami toAdd = new Origami();
-		toAdd.setId("batman");
+		toAdd.setId(MOCK_ID_PREFIX + "batman");
 		toAdd.setName("Batman");
 		toAdd.setAuthor("Ángel Morollón Guallar");
 		toAdd.setDifficulty("Medium");
 		mockedList.add(toAdd);
 		
 		toAdd = new Origami();
-		toAdd.setId("rose");
+		toAdd.setId(MOCK_ID_PREFIX + "rose");
 		toAdd.setName("Rose");
 		toAdd.setAuthor("Toshikazu Kawasaki");
 		toAdd.setDifficulty("Hard");
 		mockedList.add(toAdd);
 		
 		toAdd = new Origami();
-		toAdd.setId("trexslim");
+		toAdd.setId(MOCK_ID_PREFIX + "trexslim");
 		toAdd.setName("Tyrannosaurus Rex (Slim Version)");
 		toAdd.setAuthor("John Montroll");
 		toAdd.setDifficulty("Medium");
 		mockedList.add(toAdd);
 		
 		toAdd = new Origami();
-		toAdd.setId("trexfat");
+		toAdd.setId(MOCK_ID_PREFIX + "trexfat");
 		toAdd.setName("Tyrannosaurus Rex (Fat Version)");
 		toAdd.setAuthor("Yoshihide Momotani");
 		toAdd.setDifficulty("Easy");
