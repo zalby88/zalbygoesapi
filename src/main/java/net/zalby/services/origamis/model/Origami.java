@@ -2,6 +2,9 @@ package net.zalby.services.origamis.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Objects;
+
 import org.springframework.data.annotation.Id;
 
 /**
@@ -11,10 +14,10 @@ import org.springframework.data.annotation.Id;
  *
  */
 public class Origami {
-	
+
 	@Id
 	private String id;
-	
+
 	private String name;
 	private String author;
 	private String difficulty;
@@ -53,24 +56,38 @@ public class Origami {
 
 	@Override
 	public boolean equals(Object object) {
-		if (object != null) {
-			return this.toString().equals(object.toString());
+		if (object == this) {
+			return true;
 		}
-		
-		return false;
+
+		if (!(object instanceof Origami)) {
+			return false;
+		}
+
+		Origami orgm = (Origami) object;
+		return Objects.equals(orgm.getId(), this.id) 
+				&& Objects.equals(orgm.getName(), this.name)
+				&& Objects.equals(orgm.getAuthor(), this.author)
+				&& Objects.equals(orgm.getDifficulty(), this.difficulty);
 	}
 	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.id, this.name, this.author, this.difficulty);
+	}
+
 	/**
-	 *  the Object representation as a JSON-formatted string
+	 * @return the Object representation as a JSON-formatted string
+	 *
 	 */
 	@Override
 	public String toString() {
 		ObjectMapper jsonObjMapper = new ObjectMapper();
-		
-	    try {
-	        return jsonObjMapper.writeValueAsString(this);
-	    } catch (final JsonProcessingException jsonProcExc) {
-	        return String.valueOf(this);
-	    }
+
+		try {
+			return jsonObjMapper.writeValueAsString(this);
+		} catch (final JsonProcessingException jsonProcExc) {
+			return String.valueOf(this);
+		}
 	}
-}//end class
+}// end class

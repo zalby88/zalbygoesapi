@@ -17,7 +17,7 @@ import net.zalby.services.origamis.logic.impl.OrigamiLogicManagerDefaultImpl;
 import net.zalby.services.origamis.model.Origami;
 
 /**
- * Test Suite class for the BroadCast Centre (West London) Logic Manager.
+ * Test Suite class for the Logic Manager.
  * The Service clients and transformers are mocked since here ONLY the (orchestration) logic is tested
  * 
  * @author Alberto Lazzarin
