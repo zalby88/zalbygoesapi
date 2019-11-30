@@ -14,8 +14,8 @@ import io.swagger.annotations.ApiResponses;
 import net.zalby.services.origamis.data.access.OrigamiServiceClient;
 import net.zalby.services.origamis.data.access.impl.OrigamiMockedServiceClient;
 import net.zalby.services.origamis.data.access.impl.mongo.OrigamiMongoDbClient;
-import net.zalby.services.origamis.logic.OrigamiLogicManager;
-import net.zalby.services.origamis.logic.impl.OrigamiLogicManagerDefaultImpl;
+import net.zalby.services.origamis.logic.GetOrigamiLogicManager;
+import net.zalby.services.origamis.logic.impl.GetOrigamiLogicManagerImpl;
 import net.zalby.services.origamis.model.Origami;
 
 /**
@@ -86,10 +86,10 @@ public class OrigamisController {
 	 */
 	private List<Origami> retrieveOrigamis() {
 
-		OrigamiLogicManager origamiManager = 
-				new OrigamiLogicManagerDefaultImpl(getOrigamiServiceClient());
+		GetOrigamiLogicManager getOrigamiManager = 
+				new GetOrigamiLogicManagerImpl(getOrigamiServiceClient());
 
-		return origamiManager.getOrigamiResources();
+		return getOrigamiManager.getOrigamiResources();
 	}
 
 	/**
